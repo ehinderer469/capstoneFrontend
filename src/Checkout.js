@@ -1,11 +1,21 @@
-import React, { useState } from "react";
-import "./Checkout.css"
+import React, { useEffect, useState } from "react";
+import "./css/Checkout.css"
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function Checkout({ cartItems, onPlaceOrder }) {
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
     const [cardNumber, setCardNumber] = useState("");
 
-    const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
+    const [totalPrice, setTotalPrice] = useState(
+        cartItems.reduce((total, item) => total + item.price, 0)
+      );
+
+      useEffect(() => {
+        setTotalPrice(cartItems.reduce((total, item) => total + item.price, 0));
+      }, [cartItems]);
+    // const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -19,7 +29,9 @@ function Checkout({ cartItems, onPlaceOrder }) {
         };
 
         onPlaceOrder(sale);
-        alert("Order placed successfully!");
+        toast.success(`You have placed an order.`, {
+            position: "top-right",
+          });
         setName("");
         setAddress("");
         setCardNumber("");

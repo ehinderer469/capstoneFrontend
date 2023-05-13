@@ -1,36 +1,59 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "./Veggies.css";
-import veggiesList from "./VeggiesList";
+import React, { useEffect, useState } from "react";
+import "./css/Veggies.css";
+import { Grid } from "@mui/material";
+import {Card} from "@mui/material";
+import {CardContent} from "@mui/material";
 
 function Veggies({ addToCart }) {
     const handleClick = (veggie) => {
         addToCart(veggie);
-        alert(`${veggie.name} added to cart.`);
     };
 
+    const [veggie_list, set_veggie_list] = useState([]);
+	const veggie_list_handler = (list) => set_veggie_list(list);
+
+    useEffect(() => {
+    
+        var request_options = {
+        method: "GET",
+        redirect: "follow",
+    };
+    
+    fetch("http://localhost:5092/products", request_options)
+        .then((response) => response.json())
+        .then((result) => {
+            let list = [];
+            result.forEach((product) => {
+                if(product.category === "Vegetables"){
+                list.push(product);
+                }
+            });
+            veggie_list_handler(list);
+        })
+        .catch(error => console.log('error', error));
+    
+    }, []);
+
     return (
-        <div>
+        <div className="container">
+          <div>
             <h1 className="heading">Vegetables</h1>
-            <ul className="item-list">
-                {veggiesList.map((veggie) => (
-                    <li key={veggie.name} onClick={() => handleClick(veggie)}>
-                        <img src={veggie.img} alt={veggie.name} />
-                        <p>{veggie.name}</p>
-                        <p>Price: ${veggie.price.toFixed(2)}</p>
-                    </li>
+            <div className="veggie-list">
+              <Grid container spacing={2}>
+                {veggie_list.map((veggie, index) => (
+                  <Grid item key={index}>
+                    <Card className="card" onClick={() => handleClick(veggie)}>
+                      <CardContent>
+                        {veggie.productName + " - $" + veggie.price.toFixed(2)}
+                      </CardContent>
+                    </Card>
+                  </Grid>
                 ))}
-            </ul>
-            <div className="button-container">
-                <Link to="/dashboard">
-                    <button>Dashboard</button>
-                </Link>
-                <Link to="/cart">
-                    <button>View Cart</button>
-                </Link>
+              </Grid>
             </div>
+          </div>
         </div>
-    );
-}
+      );
+    }
 
 export default Veggies;

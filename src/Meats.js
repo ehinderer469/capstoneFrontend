@@ -1,36 +1,59 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "./Meats.css";
-import meatsList from "./MeatsList";
+import React, { useEffect, useState } from "react";
+import "./css/Meats.css";
+import { Grid } from "@mui/material";
+import {Card} from "@mui/material";
+import {CardContent} from "@mui/material";
 
 function Meats({ addToCart }) {
     const handleClick = (meat) => {
         addToCart(meat);
-        alert(`${meat.name} added to cart.`);
     };
 
+    const [meat_list, set_meat_list] = useState([]);
+	const meat_list_handler = (list) => set_meat_list(list);
+
+    useEffect(() => {
+    
+        var request_options = {
+        method: "GET",
+        redirect: "follow",
+    };
+    
+    fetch("http://localhost:5092/products", request_options)
+        .then((response) => response.json())
+        .then((result) => {
+            let list = [];
+            result.forEach((product) => {
+                if(product.category === "Meats"){
+                list.push(product);
+                }
+            });
+            meat_list_handler(list);
+        })
+        .catch(error => console.log('error', error));
+    
+    }, []);
+
     return (
-        <div>
+        <div className="container">
+          <div>
             <h1 className="heading">Meats</h1>
-            <ul className="item-list">
-                {meatsList.map((meat) => (
-                    <li key={meat.name} onClick={() => handleClick(meat)}>
-                        <img src={meat.img} alt={meat.name} />
-                        <p>{meat.name}</p>
-                        <p>Price: ${meat.price.toFixed(2)}</p>
-                    </li>
+            <div className="meat-list">
+              <Grid container spacing={2}>
+                {meat_list.map((meat, index) => (
+                  <Grid item key={index}>
+                    <Card className="card" onClick={() => handleClick(meat)}>
+                      <CardContent>
+                        {meat.productName + " - $" + meat.price.toFixed(2)}
+                      </CardContent>
+                    </Card>
+                  </Grid>
                 ))}
-            </ul>
-            <div className="button-container">
-                <Link to="/dashboard">
-                    <button>Dashboard</button>
-                </Link>
-                <Link to="/cart">
-                    <button>View Cart</button>
-                </Link>
+              </Grid>
             </div>
+          </div>
         </div>
-    );
-}
+      );
+    }
 
 export default Meats;
