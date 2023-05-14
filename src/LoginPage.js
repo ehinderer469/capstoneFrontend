@@ -16,7 +16,7 @@ function LoginPage({ onLogin }) {
       body: JSON.stringify({ username, password })
     };
 
-    fetch("http://localhost:5092/login", requestOptions)
+    fetch("http://localhost:5171/login", requestOptions)
       .then(response => response.json())
       .then(result => {
         // Handle the login response

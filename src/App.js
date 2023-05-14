@@ -39,7 +39,7 @@ function App() {
 
   // Fetch all items on initial load
   useEffect(() => {
-    fetch("http://localhost:5092/products")
+    fetch("http://localhost:5171/products")
       .then((response) => response.json())
       .then((result) => {
         setAllItems(result);

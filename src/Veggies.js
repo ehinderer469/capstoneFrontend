@@ -19,7 +19,7 @@ function Veggies({ addToCart }) {
         redirect: "follow",
     };
     
-    fetch("http://localhost:5092/products", request_options)
+    fetch("http://localhost:5171/products", request_options)
         .then((response) => response.json())
         .then((result) => {
             let list = [];
